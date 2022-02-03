@@ -1,0 +1,33 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+header{
+    background-color: black;
+    position: absolute;
+    height: 5vh;
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+header .settings{
+    width: 10px;
+    height: 10px;
+    background-color: red;
+}
+header .settings__menu{
+    height: 80vh;
+    width: 15vh;
+    background-color: grey;
+    display: none;
+    top: 5vh
+}
+header .settings__menu.active{
+    position: absolute;
+    display: block;
+}
+main{
+    background-color: green;
+    height: 100vh;
+}
