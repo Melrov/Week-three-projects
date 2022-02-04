@@ -24,7 +24,10 @@ class Person {
     checkBust() {
         if (this.aceTotal > 21 && this.cardTotal > 21) {
             this.bust = true
+            this.currentBet = 0
+            return true
         }
+        return false
     }
 
     /**
@@ -44,6 +47,7 @@ class Person {
         deck.discardHand(this.cardPile)
         this.cardPile = []
     }
+
 }
 
 /**
@@ -94,12 +98,8 @@ class Player extends Person {
 
     checkBust() {
         if (!this.split) {
-            if (this.aceTotal > 21 && this.cardTotal > 21) {
-                this.bust = true
-                this.currentBet = 0
-            }
-        }
-        else{
+            super.checkBust()
+        } else {
 
         }
     }
@@ -127,12 +127,54 @@ class Player extends Person {
         }
     }
 
+    double() {
+        if (chips - this.currentBet !== 0) {
+            this.chips -= this.currentBet
+            this.currentBet *= 2
+            this.giveCard(deck)
+        }
+    }
+
+    surrender() {
+        this.chips += this.currentBet / 2;
+        this.bust = true;
+    }
+
 }
 
 
 class House extends Person {
     constructor(div) {
         super(div)
+    }
+
+    houseWin(players){
+        players.forEach(player => {
+            if(player !== undefined && !player.bust){
+                if(player.cardTotal >= this.cardTotal){
+                    return false
+                }
+                if(player.aceTotal <= 21 && player.aceTotal > this.cardTotal){
+                    return false
+                }
+            }
+        })
+        return true
+    }
+
+    play(deck, players){
+        let running = true
+        while(running){
+            if(this.checkBust() && !this.houseWin(players)){
+                if(this.cardTotal < 17 || this.aceTotal < 17){
+                    this.giveCard(deck)
+                }
+                else{
+                    running = false
+                }
+            }
+        }
+        
     }
 
 }

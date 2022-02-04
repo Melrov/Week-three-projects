@@ -6,15 +6,18 @@ const game = () => {
     let splitBtn = document.getElementById('split')
     let doubleBtn = document.getElementById('double')
     let surrenderBtn = document.getElementById('surrender')
+
     let runningRound = false
     let deck = new Deck()
     let players = [undefined, undefined, undefined, undefined, undefined]
-    let activePlayerIndex = -1;
+    let activePlayerIndex;;
     let house = new House()
 
     function startRound() {
+        activePlayerIndex = players.length
         dealCards()
-
+        updateActivePlayer()
+        showBtns()
     }
 
     function dealCards() {
@@ -31,21 +34,23 @@ const game = () => {
         }
     }
 
-    function playerHit(index) {
-        if(players[index].split === true){
-
-        }
-        else{
-            players[index].giveCard(deck)
-        }
-    }
-
     function getPlayerIndex(e, callback){
         let playerIndex = parseInt(e.target.id.charAt(1)) - 1;
         if (!isNaN(playerIndex) && players[playerIndex] !== undefined){
             callback(playerIndex)
         }
     }
+
+    function updateActivePlayer() {
+        for(let i = activePlayerIndex-1; i >= 0; i--){
+            if(players[i] !== undefined){
+                activePlayerIndex = i;
+                return
+            }
+        }
+        house.play(deck, players)
+    }
+
 
     function showBtns(){
         if(players[activePlayerIndex].cardPile.length === 2){
@@ -64,6 +69,14 @@ const game = () => {
         }
         hitBtn.style.display = ''
         standBtn.style.display = ''
+    }
+
+    function hideBtns(){
+        hitBtn.style.display = 'none'
+        standBtn.style.display = 'none'
+        splitBtn.style.display = 'none'
+        doubleBtn.style.display = 'none'
+        surrenderBtn.style.display = 'none'
     }
 
     return {
@@ -102,12 +115,30 @@ const game = () => {
 
         hit: () => {
             players[activePlayerIndex].giveCard(deck)
+            if(players[activePlayerIndex].checkBust()){
+                updateActivePlayer();
+            }
+            showBtns();
         },
         stand: () => {
-
+            updateActivePlayer()
+            showBtns()
         },
         split: () => {
             players[activePlayerIndex].splitHand(deck)
+            showBtns()
+        },
+        double: () => {
+            players[activePlayerIndex].double(deck)
+            if(players[activePlayerIndex].checkBust()){
+                updateActivePlayer();
+            }
+            showBtns()
+        },
+        surrender: () => {
+            players[activePlayerIndex].surrender()
+            updateActivePlayer()
+            showBtns()
         }
     }
 
