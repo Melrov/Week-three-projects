@@ -1,27 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- <link rel="stylesheet" href="style.css"> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
-</head>
-<body>
+  </head>
+  <body>
     <!-- https://wizardofodds.com/play/blackjack/ -->
     <header>
-        <div class="settings"></div>
-        <div class="settings__menu active"></div>
-
+      <div class="settings"></div>
+      <div class="settings__menu active"></div>
     </header>
     <main>
-        <div id="board">
-
+      <div id="board">
+        <div id="p1">
+          <button id="p1-join"></button>
+          <div id="p1-split-left"></div>
+          <div id="p1-hand"></div>
+          <div id="p1-split-right"></div>
+          <button id="p1-lockBet"></button>
         </div>
+
+        <button id="hit"></button>
+        <button id="stand"></button>
+        <button id="split"></button>
+        <button id="double"></button>
+        <button id="surrender"></button>
+      </div>
     </main>
     <script src="deck.js"></script>
     <script src="player.js"></script>
     <script src="index.js"></script>
-</body>
+  </body>
 </html>
