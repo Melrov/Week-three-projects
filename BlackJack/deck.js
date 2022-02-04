@@ -40,13 +40,19 @@ class Card {
     }
 }
 
+/**
+ * 
+ * @param {Integer} decks optional default is 1 -- how many decks of 52 to add to the cards pulled from
+ * @param {boolean} cardStopper optional default is false -- only available when decks is 3 or greater
+ */
 class Deck {
-    constructor(decks = 1, cardStopper = 0) {
+    constructor(decks = 1, cardStopper = false) {
         this.decks = decks > 0 ? decks : 1;
         this.activePile = [];
         this.discardPile = [];
         this.cardPile = [];
-        this.cardStopper = cardStopper !== 0 && this.decks > 2 ? cardStopper : false
+        this.cardStopper = cardStopper && this.decks > 2 ? cardStopper : false
+        this.cardStopperIndex = -1;
 
         for (let i = 1; i <= decks; i++) {
             for (let j = 1; j <= 4; j++) {
@@ -78,10 +84,26 @@ class Deck {
         }
 
         if (this.cardStopper) {
-            let index = this.cardPile.length - Math.floor(Math.random() * Math.floor(this.cardPile.length * 0.2))
-            this.cardPile.splice(index, 0, new Card(0, 5));
+            this.cardStopperIndex = this.cardPile.length - Math.floor(Math.random() * Math.floor(this.cardPile.length * 0.2))
+            this.cardPile.splice(this.cardStopperIndex, 0, new Card(0, 5));
         }
 
+    }
+
+    getCard(){
+        if(this.cardPile[0].type === 'stopper' || this.cardPile.length === 0){
+            this.cardPile.shift()
+            this.cardPile.push(...this.discardPile)
+            this.discardPile = [];
+            this.shuffle()
+        }
+        return this.cardPile.shift()
+    }
+
+    discardHand(...cards){
+        cards.forEach(card => {
+            this.discardPile.push(card)
+        })
     }
 
 
