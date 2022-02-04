@@ -14,6 +14,7 @@ const game = () => {
     let house = new House()
 
     function startRound() {
+        console.log('starting round')
         activePlayerIndex = players.length
         dealCards()
         updateActivePlayer()
@@ -36,7 +37,7 @@ const game = () => {
 
     function getPlayerIndex(e, callback){
         let playerIndex = parseInt(e.target.id.charAt(1)) - 1;
-        if (!isNaN(playerIndex) && players[playerIndex] !== undefined){
+        if (!isNaN(playerIndex)){
             callback(playerIndex)
         }
     }
@@ -45,6 +46,7 @@ const game = () => {
         for(let i = activePlayerIndex-1; i >= 0; i--){
             if(players[i] !== undefined){
                 activePlayerIndex = i;
+                console.log(players[activePlayerIndex])
                 return
             }
         }
@@ -54,7 +56,9 @@ const game = () => {
 
     function showBtns(){
         if(players[activePlayerIndex].cardPile.length === 2){
-            doubleBtn.style.display = ''
+            if(players[activePlayerIndex].chips - players[activePlayerIndex].currentBet >= 0){
+                doubleBtn.style.display = ''
+            }
             surrenderBtn.style.display = ''
         }
         else{
@@ -85,10 +89,12 @@ const game = () => {
                 players[index] = new Player(document.getElementById(`p${index+1}`));
                 e.target.style.display = 'none';
             })
+            console.log(players)
         },
         betLock: e => {
             getPlayerIndex(e, (index => {
                 players[index].betLock = true
+                console.log('betlock ' + index+1)
             }))
             
             if (!runningRound) {
@@ -117,6 +123,9 @@ const game = () => {
             players[activePlayerIndex].giveCard(deck)
             if(players[activePlayerIndex].checkBust()){
                 updateActivePlayer();
+            }
+            else{
+                console.log(players[activePlayerIndex])
             }
             showBtns();
         },

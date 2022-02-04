@@ -76,6 +76,7 @@ class Player extends Person {
         this.rightCardTotal = 0;
         this.rightBust = false;
         this.betR = 0;
+        this.isActiveLeft = true
     }
 
     giveCard(deck) {
@@ -83,13 +84,47 @@ class Player extends Person {
             super.giveCard(deck)
             this.checkSplit()
         } else {
+            if (this.isActiveLeft) {
+                this.splitPileL.push(deck.getCard())
+            }
+        }
+    }
 
+    evalSplitValue() {
+        if (this.isActiveLeft) {
+            this.leftCardTotal = 0;
+            this.leftAceTotal = 0;
+            this.splitPileL.forEach(card => {
+                this.leftCardTotal += card.value;
+                if (card.name === 'Ace') {
+                    this.leftAceTotal += 10
+                } else {
+                    this.leftAceTotal += card.value
+                }
+            })
+            this.checkBust()
+        } else {
+            this.rightCardTotal = 0;
+            this.rightAceTotal = 0;
+            this.splitPileL.forEach(card => {
+                this.rightCardTotal += card.value;
+                if (card.name === 'Ace') {
+                    this.rightAceTotal += 10
+                } else {
+                    this.rightAceTotal += card.value
+                }
+            })
+            this.checkBust()
         }
     }
 
     checkSplit() {
         if (this.cardPile.length === 2 && this.chips - this.currentBet !== 0) {
-
+            if (this.cardPile[0].value === this.cardPile[1].value) {
+                this.splitAvailable = true
+                return true
+            }
+            return false
         } else {
             this.splitAvailable = false
             return false
@@ -100,7 +135,35 @@ class Player extends Person {
         if (!this.split) {
             super.checkBust()
         } else {
+            return this.splitCheckBust()
+        }
+    }
+    splitCheckBust() {
+        if (this.isActiveLeft) {
+            if (this.splitPileL.aceTotal > 21 && this.splitPileL.cardTotal > 21) {
+                this.leftBust = true
+                this.betL = 0
+                return true
+            }
+            return false
+        } else {
+            if (this.splitPileR.aceTotal > 21 && this.splitPileR.cardTotal > 21) {
+                this.rightBust = true
+                this.betR = 0
+                return true
+            }
+            return false
+        }
+    }
 
+    discardHand(deck) {
+        if (!this.split) {
+            super.discardHand(deck)
+        } else {
+            deck.discardHand(this.splitPileL)
+            this.splitPileL = []
+            deck.discardHand(this.splitPileR)
+            this.splitPileR = []
         }
     }
 
@@ -113,8 +176,8 @@ class Player extends Person {
             this.split = true
             this.splitAvailable = false
 
-            this.splitPileL = this.cardPile[0]
-            this.splitPileR = this.cardPile[1]
+            this.splitPileL.push(this.cardPile[0])
+            this.splitPileR.push(this.cardPile[1])
             this.cardPile = []
 
             this.betL = this.currentBet;
@@ -128,7 +191,7 @@ class Player extends Person {
     }
 
     double() {
-        if (chips - this.currentBet !== 0) {
+        if (chips - this.currentBet >= 0) {
             this.chips -= this.currentBet
             this.currentBet *= 2
             this.giveCard(deck)
@@ -148,13 +211,13 @@ class House extends Person {
         super(div)
     }
 
-    houseWin(players){
+    houseWin(players) {
         players.forEach(player => {
-            if(player !== undefined && !player.bust){
-                if(player.cardTotal >= this.cardTotal){
+            if (player !== undefined && !player.bust) {
+                if (player.cardTotal >= this.cardTotal) {
                     return false
                 }
-                if(player.aceTotal <= 21 && player.aceTotal > this.cardTotal){
+                if (player.aceTotal <= 21 && player.aceTotal > this.cardTotal) {
                     return false
                 }
             }
@@ -162,19 +225,28 @@ class House extends Person {
         return true
     }
 
-    play(deck, players){
+    play(deck, players) {
         let running = true
-        while(running){
-            if(this.checkBust() && !this.houseWin(players)){
-                if(this.cardTotal < 17 || this.aceTotal < 17){
+        while (running) {
+            if (this.checkBust() && !this.houseWin(players)) {
+                if (this.cardTotal < 17 || this.aceTotal < 17) {
                     this.giveCard(deck)
-                }
-                else{
+                } else {
                     running = false
                 }
+            } else {
+                running = false
             }
         }
-        
+        if (this.houseWin(players)) {
+            players.forEach(player => {
+                if (player !== undefined) {
+                    player.currentBet = 0;
+                    player.discardHand(deck)
+                }
+            })
+        }
+
     }
 
 }
