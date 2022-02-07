@@ -66,6 +66,8 @@ const game = () => {
         houseDiv.innerText = house.cardPile[0].cardText
         houseScoreDiv.innerText = house.cardPile[0].value
         houseScoreDiv.style.display = 'inline-block'
+        houseDiv.style.backgroundColor = 'white'
+        houseDiv.style.border - '2px solid black'
         houseScoreDiv.style.backgroundColor = 'gray'
     }
 
@@ -153,13 +155,15 @@ const game = () => {
         console.log(players[i].cardPile)
         let span = document.createElement('span')
         if (players[i].cardPile.length !== 1) span.style.position = 'absolute';
-        span.style.top = `${(players[i].cardPile.length - 1) * 4}px`
-        span.style.left = `${(players[i].cardPile.length - 1) * 17}px`
+        span.style.top = `${(players[i].cardPile.length - 1) * 3}px`
+        span.style.left = `${(players[i].cardPile.length - 1) * 22}px`
         span.style.transform = `rotate(${(players[i].cardPile.length - 1) * 6}deg)`
         let typeNum = players[i].cardPile[players[i].cardPile.length - 1].typeNum
         span.style.color = typeNum > 2 ? 'red' : 'black'
         span.style.zIndex = '200'
         span.innerText = players[i].cardPile[players[i].cardPile.length - 1].cardText
+        span.style.backgroundColor = 'white'
+        span.style.border = '2px solid black'
         players[i].div.append(span)
     }
 
