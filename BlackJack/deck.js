@@ -1,18 +1,20 @@
 class Card {
     constructor(value, type) {
         this.value = value <= 10 ? value : 10;
+        this.cardText = type > 2 ? String.fromCharCode((value + ( (type-3) * 13 )) + 64) : String.fromCharCode((value + ( (type-1) * 13 )) + 96)
+        this.typeNum = type
         switch (type) {
             case 1:
                 this.type = 'spade'
                 break
             case 2:
-                this.type = 'hearts'
+                this.type = 'clubs'
                 break
             case 3:
                 this.type = 'diamonds'
                 break
             case 4:
-                this.type = 'clubs'
+                this.type = 'hearts'
                 break
             case 5:
                 this.type = 'stopper'
@@ -91,7 +93,7 @@ class Deck {
     }
 
     getCard(){
-        if(this.cardPile[0].type === 'stopper' || this.cardPile.length === 0){
+        if(this.cardPile.length === 0 || this.cardPile[0].type === 'stopper' ){
             this.cardPile.shift()
             this.cardPile.push(...this.discardPile)
             this.discardPile = [];
@@ -100,8 +102,11 @@ class Deck {
         return this.cardPile.shift()
     }
 
-    discardHand(...cards){
+    discardHand(cards){
+        //console.log('discard')
+        //console.log(cards)
         cards.forEach(card => {
+            //console.log(card)
             this.discardPile.push(card)
         })
     }

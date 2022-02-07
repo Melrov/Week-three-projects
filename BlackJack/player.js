@@ -133,7 +133,7 @@ class Player extends Person {
 
     checkBust() {
         if (!this.split) {
-            super.checkBust()
+            return super.checkBust()
         } else {
             return this.splitCheckBust()
         }
@@ -167,7 +167,7 @@ class Player extends Person {
         }
     }
 
-    lockBet() {
+    toggleBet() {
         this.betLock = !this.betLock
     }
 
@@ -190,8 +190,8 @@ class Player extends Person {
         }
     }
 
-    double() {
-        if (chips - this.currentBet >= 0) {
+    double(deck) {
+        if (this.chips - this.currentBet >= 0) {
             this.chips -= this.currentBet
             this.currentBet *= 2
             this.giveCard(deck)
@@ -200,7 +200,13 @@ class Player extends Person {
 
     surrender() {
         this.chips += this.currentBet / 2;
+        this.currentBet = 0;
         this.bust = true;
+    }
+
+    addBet(bet){
+        this.currentBet+=bet
+        this.chips-= bet
     }
 
 }
@@ -212,25 +218,49 @@ class House extends Person {
     }
 
     houseWin(players) {
-        players.forEach(player => {
-            if (player !== undefined && !player.bust) {
-                if (player.cardTotal >= this.cardTotal) {
+
+        for(let i = 0; i < players.length; i++){
+            if(players[i] !== undefined && !players[i].bust){
+                if(players[i].cardTotal >= this.cardTotal){
                     return false
                 }
-                if (player.aceTotal <= 21 && player.aceTotal > this.cardTotal) {
+                if(players[i].aceTotal <= 21 && players[i].aceTotal > this.cardTotal){
                     return false
                 }
             }
-        })
-        return true
+        }
+        if(this.cardTotal <= 21 || this.aceTotal <= 21){
+            return true
+        }
+        return false
     }
 
-    play(deck, players) {
+    showAllHouseCards(houseDiv, houseScoreDiv){
+        houseScoreDiv.innerText = this.aceTotal === this.cardTotal ? `${this.cardTotal}` : this.aceTotal > 21 ? `${this.cardTotal}` : `${this.cardTotal} / ${this.aceTotal}`
+        houseDiv.innerText = ""
+        this.cardPile.forEach(card => {
+            houseDiv.innerText += card.cardText
+        })
+    }
+
+    getHigherNum(aceTotal, cardTotal){
+        if(aceTotal > 21){
+            return cardTotal
+        }
+        return aceTotal
+    }
+
+    play(deck, players, houseDiv, houseScoreDiv, playerScoreDiv) {
+        console.log(players)
+        console.log(this.checkBust(), this.houseWin(players))
+        this.showAllHouseCards(houseDiv, houseScoreDiv)
         let running = true
         while (running) {
-            if (this.checkBust() && !this.houseWin(players)) {
+            if (!this.checkBust() && !this.houseWin(players)) {
                 if (this.cardTotal < 17 || this.aceTotal < 17) {
                     this.giveCard(deck)
+                    this.showAllHouseCards(houseDiv, houseScoreDiv)
+                    console.log(this.cardPile)
                 } else {
                     running = false
                 }
@@ -238,14 +268,80 @@ class House extends Person {
                 running = false
             }
         }
+        console.log(this.houseWin(players))
+        console.log(this.cardTotal)
+        console.log(this.cardPile)
+
+        this.discardHand(deck)
+
         if (this.houseWin(players)) {
+            houseScoreDiv.style.backgroundColor = 'green'
             players.forEach(player => {
                 if (player !== undefined) {
                     player.currentBet = 0;
+                    player.bust = false
                     player.discardHand(deck)
                 }
             })
+            playerScoreDiv.forEach(score => {
+                score.style.backgroundColor = 'red'
+            })
         }
+        else if(!this.checkBust()){
+            houseScoreDiv.style.backgroundColor = 'red'
+            for(let i = 0; i < players.length; i++){
+                if(players[i] !== undefined ){
+                    if(!players[i].bust){
+                        if(this.getHigherNum(this.aceTotal, this.cardTotal) < this.getHigherNum(players[i].aceTotal, players[i].cardTotal)){
+                            players[i].chips += Math.floor(players[i].currentBet * 1.5)
+                            players[i].currentBet = 0;
+                            playerScoreDiv[i].style.backgroundColor = 'green'
+                            players[i].discardHand(deck)
+                        }
+                        else if(this.getHigherNum(this.aceTotal, this.cardTotal) === this.getHigherNum(players[i].aceTotal, players[i].cardTotal)){
+                            players[i].chips += players[i].currentBet
+                            players[i].currentBet = 0
+                            playerScoreDiv[i].style.backgroundColor = 'blue'
+                            players[i].discardHand(deck)
+                        }
+                        else if(this.getHigherNum(this.aceTotal, this.cardTotal) > this.getHigherNum(players[i].aceTotal, players[i].cardTotal)){
+                            players[i].currentBet = 0;
+                            playerScoreDiv[i].style.backgroundColor = 'red'
+                            players[i].discardHand(deck)
+                        }
+                    }
+                    else{
+                        players[i].currentBet = 0;
+                        playerScoreDiv[i].style.backgroundColor = 'red'
+                        players[i].bust = false
+                        players[i].discardHand(deck)
+                    }
+                }
+            }
+           
+        }
+        else{
+            houseScoreDiv.style.backgroundColor = 'red'
+            for(let i = 0; i < players.length; i++){
+                if(players[i] !== undefined){
+                    if(!players[i].bust){
+                        players[i].chips += Math.floor(players[i].currentBet * 1.5)
+                        playerScoreDiv[i].style.backgroundColor = 'green'
+                        players[i].currentBet = 0;
+                        players[i].discardHand(deck)
+                    }
+                    else{
+                        players[i].chips += players[i].currentBet
+                        playerScoreDiv[i].style.backgroundColor = 'red'
+                        players[i].currentBet = 0
+                        players[i].bust = false
+                        players[i].discardHand(deck)
+                    }
+                }
+            }
+        }
+        console.log(players)
+        console.log(deck.discardPile)
 
     }
 

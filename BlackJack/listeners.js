@@ -10,6 +10,10 @@ for(let i = 0; i < playerJoinDivs.length; i++){
     playerLockBetDivs[i].addEventListener('click', current.betLock)
 }
 
+document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', current.addBet)
+})
+
 let hit = document.getElementById('hit')
 hit.addEventListener('click', current.hit)
 
