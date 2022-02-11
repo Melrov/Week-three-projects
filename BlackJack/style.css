@@ -52,7 +52,7 @@ header .settings__menu.active {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
     position: absolute;
-    top: -200px;
+    top: -235px;
     transition: all 1s ease-in-out;
 }
 

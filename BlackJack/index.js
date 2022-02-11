@@ -155,6 +155,7 @@ const game = () => {
         console.log(players[i].cardPile)
         let span = document.createElement('span')
         if (players[i].cardPile.length !== 1) span.style.position = 'absolute';
+        if(players[i].cardPile.length === 1) span.style.paddingTop = '5px'
         span.style.top = `${(players[i].cardPile.length - 1) * 3}px`
         span.style.left = `${(players[i].cardPile.length - 1) * 22}px`
         span.style.transform = `rotate(${(players[i].cardPile.length - 1) * 6}deg)`
