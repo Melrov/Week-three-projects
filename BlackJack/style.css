@@ -52,7 +52,11 @@ header .settings__menu.active {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
     position: absolute;
+<<<<<<< HEAD
     top: -235px;
+=======
+    top: -225px;
+>>>>>>> 21c5fe680af8f140771cd8ca26e111346bd92d4f
     transition: all 1s ease-in-out;
 }
 
@@ -114,7 +118,7 @@ main {
 
 .player-hand {
     position: relative;
-    top: -17vh;
+    top: -23vh;
 }
 
 .player-chips {

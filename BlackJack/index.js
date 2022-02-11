@@ -67,7 +67,7 @@ const game = () => {
         houseScoreDiv.innerText = house.cardPile[0].value
         houseScoreDiv.style.display = 'inline-block'
         houseDiv.style.backgroundColor = 'white'
-        houseDiv.style.border - '2px solid black'
+        houseDiv.style.border = '2px solid black'
         houseScoreDiv.style.backgroundColor = 'gray'
     }
 
