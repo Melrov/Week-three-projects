@@ -20,8 +20,8 @@ hit.addEventListener("click", current.hit);
 let stand = document.getElementById("stand");
 stand.addEventListener("click", current.stand);
 
-let split = document.getElementById("split");
-split.addEventListener("click", current.split);
+// let split = document.getElementById("split");
+// split.addEventListener("click", current.split);
 
 let double = document.getElementById("double");
 double.addEventListener("click", current.double);
