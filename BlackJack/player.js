@@ -252,8 +252,8 @@ class House extends Person {
   }
 
   play(deck, players, houseDiv, houseScoreDiv, playerScoreDiv) {
-    console.log(players);
-    console.log(this.checkBust(), this.houseWin(players));
+    // console.log(players);
+    // console.log(this.checkBust(), this.houseWin(players));
     this.showAllHouseCards(houseDiv, houseScoreDiv);
     let running = true;
     while (running) {
@@ -261,7 +261,7 @@ class House extends Person {
         if (this.cardTotal < 17 || this.aceTotal < 17) {
           this.giveCard(deck);
           this.showAllHouseCards(houseDiv, houseScoreDiv);
-          console.log(this.cardPile);
+        //   console.log(this.cardPile);
         } else {
           running = false;
         }
@@ -269,9 +269,9 @@ class House extends Person {
         running = false;
       }
     }
-    console.log(this.houseWin(players));
-    console.log(this.cardTotal);
-    console.log(this.cardPile);
+    // console.log(this.houseWin(players));
+    // console.log(this.cardTotal);
+    // console.log(this.cardPile);
 
     this.discardHand(deck);
 
@@ -300,7 +300,7 @@ class House extends Person {
             } else if (this.getHigherNum(this.aceTotal, this.cardTotal) === this.getHigherNum(players[i].aceTotal, players[i].cardTotal)) {
               players[i].chips += players[i].currentBet;
               players[i].currentBet = 0;
-              playerScoreDiv[i].style.backgroundColor = "blue";
+              playerScoreDiv[i].style.backgroundColor = "#6c6cff";
               players[i].discardHand(deck);
             } else if (this.getHigherNum(this.aceTotal, this.cardTotal) > this.getHigherNum(players[i].aceTotal, players[i].cardTotal)) {
               players[i].currentBet = 0;
@@ -334,7 +334,7 @@ class House extends Person {
         }
       }
     }
-    console.log(players);
-    console.log(deck.discardPile);
+    // console.log(players);
+    // console.log(deck.discardPile);
   }
 }
