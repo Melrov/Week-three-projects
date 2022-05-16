@@ -28,6 +28,7 @@ const game = () => {
 
   function startRound() {
     runningRound = true;
+    hideJoinBtns();
     hideBetSec();
     hideAllPlayerCards();
     // console.log("starting round");
@@ -112,6 +113,7 @@ const game = () => {
     runningRound = false;
     unLockBets();
     showBetSec();
+    showJoinBtns();
   }
 
   function unLockBets() {
@@ -256,14 +258,31 @@ const game = () => {
     }
   }
 
+  function hideJoinBtns() {
+    players.forEach((player, idx) => {
+      if (!player) {
+        document.getElementById(`p${idx + 1}-join`).style.display = "none";
+      }
+    });
+  }
+  function showJoinBtns() {
+    players.forEach((player, idx) => {
+      if (!player) {
+        document.getElementById(`p${idx + 1}-join`).style.display = "inline-block";
+      }
+    });
+  }
+
   return {
     playerJoin: (e) => {
-      getPlayerIndex(e, (index) => {
-        playerBetSec[index].style.display = "flex";
-        players[index] = new Player(document.getElementById(`p${index + 1}-hand`));
-        e.target.style.display = "none";
-      });
-    //   console.log(players);
+      if (!runningRound) {
+        getPlayerIndex(e, (index) => {
+          playerBetSec[index].style.display = "flex";
+          players[index] = new Player(document.getElementById(`p${index + 1}-hand`));
+          e.target.style.display = "none";
+        });
+      }
+      //   console.log(players);
     },
     betLock: (e) => {
       getPlayerIndex(e, (index) => {
@@ -330,7 +349,7 @@ const game = () => {
       showBetChips(activePlayerIndex);
       showPlayerScore();
       showPlayerCard();
-    //   console.log(players[activePlayerIndex]);
+      //   console.log(players[activePlayerIndex]);
       if (players[activePlayerIndex].checkBust()) {
         updateActivePlayer();
       }
